@@ -2,8 +2,14 @@ package com.hp.hp_omnipad.ui.video
 
 import android.app.Application
 import android.media.AudioManager
-import android.net.*
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
+import android.net.Uri
+import android.os.Environment
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.C
@@ -19,8 +25,8 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.File
-import android.net.Uri
 import com.hp.hp_omnipad.ui.home.model.VideoItem
+import com.hp.hp_omnipad.utils.SafeFilePaths
 
 data class VideoQuality(
     val label: String,
@@ -421,13 +427,13 @@ class VideoPlayerViewModel(
 
     fun playVideo(video: VideoItem) {
         val url = video.videoUrl
+        val uri = toPlaybackUri(url) ?: run {
+            Log.w(TAG, "Rejected playback URL: $url")
+            return
+        }
 
         currentVideoUrl = url
-        isPlayingLocalFile = url.startsWith("/")
-
-        val uri =
-            if (isPlayingLocalFile) Uri.fromFile(File(url))
-            else Uri.parse(url)
+        isPlayingLocalFile = uri.scheme == "file"
 
         exoPlayer.setMediaItem(MediaItem.fromUri(uri))
         exoPlayer.prepare()
@@ -452,16 +458,19 @@ class VideoPlayerViewModel(
     // ---------------- Video Preparation ----------------
 
     fun prepare(path: String, autoPlay: Boolean = false) {
-        isPlayingLocalFile = path.startsWith("/")
+        val uri = toPlaybackUri(path) ?: run {
+            Log.w(TAG, "Rejected playback path: $path")
+            return
+        }
+
+        isPlayingLocalFile = uri.scheme == "file"
         currentVideoUrl = path
-        
+
         // Guard: never attempt remote load when offline
         if (!isPlayingLocalFile && !checkCurrentConnection()) {
             Log.w(TAG, "Skipping prepare — offline and no local file: $path")
             return
         }
-
-        val uri = if (isPlayingLocalFile) Uri.fromFile(File(path)) else Uri.parse(path)
 
         // ✅ FIXED: Set playWhenReady BEFORE prepare for faster startup. 
         // Also removed redundant seekTo(0) which resets buffer.
@@ -497,6 +506,33 @@ class VideoPlayerViewModel(
 
     fun savePlayerState() {
         playbackPosition = exoPlayer.currentPosition
+    }
+
+    private fun allowedMediaBaseDirs(): List<File> = buildList {
+        add(appContext.filesDir)
+        add(appContext.cacheDir)
+        appContext.getExternalFilesDir(Environment.DIRECTORY_MOVIES)?.let { moviesDir ->
+            add(moviesDir)
+            add(File(moviesDir, "OmniPad"))
+        }
+    }
+
+    /**
+     * Builds a safe ExoPlayer URI from a local absolute path or remote http(s) URL (CWE-73).
+     */
+    private fun toPlaybackUri(path: String): Uri? {
+        if (path.startsWith("/")) {
+            return SafeFilePaths.resolveLocalPlaybackFile(path, allowedMediaBaseDirs())?.toUri()
+        }
+        return try {
+            val uri = Uri.parse(path)
+            when (uri.scheme?.lowercase()) {
+                "http", "https" -> uri
+                else -> null
+            }
+        } catch (e: Exception) {
+            null
+        }
     }
 
     override fun onCleared() {

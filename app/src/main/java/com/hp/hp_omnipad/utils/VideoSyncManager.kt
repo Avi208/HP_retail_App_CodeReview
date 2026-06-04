@@ -1,7 +1,9 @@
 package com.hp.hp_omnipad.utils
 
 import android.content.Context
+import android.net.Uri
 import android.os.Environment
+import androidx.core.net.toUri
 import android.util.Log
 import com.google.gson.Gson
 import com.hp.hp_omnipad.data.remote.model.VideoDto
@@ -508,16 +510,35 @@ object VideoSyncManager {
         return "${seconds / 60}:${(seconds % 60).toString().padStart(2, '0')}"
     }
 
+    fun getLocalVideoFile(videoId: String): File? {
+        val safeId = SafeFilePaths.sanitizeVideoId(videoId) ?: return null
+        val folder = findVideoFolder(safeId) ?: return null
+        if (!SafeFilePaths.isContainedIn(folder, getBaseFolder())) return null
+        val file = SafeFilePaths.resolveChildFile(folder, "video.mp4") ?: return null
+        return if (file.exists() && file.length() > 1000) file else null
+    }
+
     fun getLocalVideoPath(videoId: String): String? {
-        val folder = findVideoFolder(videoId) ?: return null
-        val file = File(folder, "video.mp4")
-        return if (file.exists()) file.absolutePath else null
+        return getLocalVideoFile(videoId)?.absolutePath
+    }
+
+    /**
+     * Returns a validated thumbnail file under the app download directory, or null.
+     */
+    fun getLocalThumbnailFile(videoId: String): File? {
+        val safeId = SafeFilePaths.sanitizeVideoId(videoId) ?: return null
+        val folder = findVideoFolder(safeId) ?: return null
+        if (!SafeFilePaths.isContainedIn(folder, getBaseFolder())) return null
+        val file = SafeFilePaths.resolveChildFile(folder, "thumbnail.jpg") ?: return null
+        return if (file.exists() && file.length() > 0) file else null
     }
 
     fun getLocalThumbnailPath(videoId: String): String? {
-        val folder = findVideoFolder(videoId) ?: return null
-        val file = File(folder, "thumbnail.jpg")
-        return if (file.exists()) file.absolutePath else null
+        return getLocalThumbnailFile(videoId)?.absolutePath
+    }
+
+    fun getLocalThumbnailUri(videoId: String): Uri? {
+        return getLocalThumbnailFile(videoId)?.toUri()
     }
 
     fun getAllDownloadedVideos(): List<VideoMetadata> {

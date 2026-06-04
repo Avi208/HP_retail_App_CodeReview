@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import android.net.Uri
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -30,13 +31,13 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.hp.hp_omnipad.R
+import com.hp.hp_omnipad.utils.SafeFilePaths
 import com.hp.hp_omnipad.utils.VideoSyncManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -183,8 +184,8 @@ fun OfflineVideosScreen(
                     items(videos, key = { it.id }) { video ->
                         OfflineVideoCard(
                             video = video,
-                            onPlay = { 
-                                val path = VideoSyncManager.getLocalVideoPath(video.id)
+                            onPlay = {
+                                val path = safeLocalVideoPath(video.id)
                                 if (path != null) onVideoSelected(path)
                             },
                             onDelete = { videoToDelete = video }
@@ -247,7 +248,7 @@ fun OfflineVideoCard(
     onDelete: () -> Unit
 ) {
     val context = LocalContext.current
-    val thumbnailPath = remember(video.id) { VideoSyncManager.getLocalThumbnailPath(video.id) }
+    val thumbnailUri = remember(video.id) { safeLocalThumbnailUri(video.id) }
     
     Card(
         modifier = Modifier
@@ -265,10 +266,10 @@ fun OfflineVideoCard(
                     .fillMaxWidth()
                     .aspectRatio(16f / 9f)
             ) {
-                if (thumbnailPath != null && File(thumbnailPath).exists()) {
+                if (thumbnailUri != null) {
                     AsyncImage(
                         model = ImageRequest.Builder(context)
-                            .data(File(thumbnailPath))
+                            .data(thumbnailUri)
                             .crossfade(true)
                             .build(),
                         contentDescription = video.title,
@@ -385,4 +386,16 @@ fun OfflineVideoCard(
             }
         }
     }
+}
+
+/** Validated local thumbnail URI for Coil (CWE-73). */
+private fun safeLocalThumbnailUri(videoId: String): Uri? {
+    val safeId = SafeFilePaths.sanitizeVideoId(videoId) ?: return null
+    return VideoSyncManager.getLocalThumbnailUri(safeId)
+}
+
+/** Validated local video path for playback (CWE-73). */
+private fun safeLocalVideoPath(videoId: String): String? {
+    val safeId = SafeFilePaths.sanitizeVideoId(videoId) ?: return null
+    return VideoSyncManager.getLocalVideoPath(safeId)
 }

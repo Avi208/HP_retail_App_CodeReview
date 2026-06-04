@@ -141,34 +141,15 @@ object OfflineDataManager {
     }
     
     /**
-     * Validates a video ID for use as a single filename segment (CWE-73).
-     * Rejects path separators and traversal sequences; allows typical Firebase doc IDs.
-     */
-    private fun sanitizeVideoIdForFilename(videoId: String): String? {
-        if (videoId.isBlank() || videoId.length > 128) return null
-        if (!videoId.matches(Regex("^[a-zA-Z0-9_-]+$"))) return null
-        return videoId
-    }
-    
-    /**
      * Resolves a thumbnail file only under [getThumbnailFolder]; returns null if invalid.
      */
     private fun resolveThumbnailFile(context: Context, videoId: String): File? {
-        val safeId = sanitizeVideoIdForFilename(videoId) ?: return null
-        return try {
-            val baseDir = getThumbnailFolder(context).canonicalFile
-            val file = File(baseDir, "$safeId.jpg").canonicalFile
-            val basePath = baseDir.absolutePath
-            val filePath = file.absolutePath
-            if (filePath == basePath || !filePath.startsWith("$basePath${File.separator}")) {
-                null
-            } else {
-                file
-            }
-        } catch (e: Exception) {
+        val safeId = SafeFilePaths.sanitizeVideoId(videoId) ?: return null
+        val file = SafeFilePaths.resolveChildFile(getThumbnailFolder(context), "$safeId.jpg")
+        if (file == null) {
             Log.w(TAG, "Rejected thumbnail path for video id: $videoId")
-            null
         }
+        return file
     }
     
     /**
