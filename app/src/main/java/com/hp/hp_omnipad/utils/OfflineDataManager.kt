@@ -141,17 +141,48 @@ object OfflineDataManager {
     }
     
     /**
+     * Validates a video ID for use as a single filename segment (CWE-73).
+     * Rejects path separators and traversal sequences; allows typical Firebase doc IDs.
+     */
+    private fun sanitizeVideoIdForFilename(videoId: String): String? {
+        if (videoId.isBlank() || videoId.length > 128) return null
+        if (!videoId.matches(Regex("^[a-zA-Z0-9_-]+$"))) return null
+        return videoId
+    }
+    
+    /**
+     * Resolves a thumbnail file only under [getThumbnailFolder]; returns null if invalid.
+     */
+    private fun resolveThumbnailFile(context: Context, videoId: String): File? {
+        val safeId = sanitizeVideoIdForFilename(videoId) ?: return null
+        return try {
+            val baseDir = getThumbnailFolder(context).canonicalFile
+            val file = File(baseDir, "$safeId.jpg").canonicalFile
+            val basePath = baseDir.absolutePath
+            val filePath = file.absolutePath
+            if (filePath == basePath || !filePath.startsWith("$basePath${File.separator}")) {
+                null
+            } else {
+                file
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Rejected thumbnail path for video id: $videoId")
+            null
+        }
+    }
+    
+    /**
      * Get local thumbnail path for a video
      */
     fun getLocalThumbnailPath(context: Context, videoId: String): String {
-        return File(getThumbnailFolder(context), "$videoId.jpg").absolutePath
+        return resolveThumbnailFile(context, videoId)?.absolutePath ?: ""
     }
     
     /**
      * Check if thumbnail is cached locally
      */
     fun isThumbnailCached(context: Context, videoId: String): Boolean {
-        val file = File(getThumbnailFolder(context), "$videoId.jpg")
+        val file = resolveThumbnailFile(context, videoId) ?: return false
         return file.exists() && file.length() > 0
     }
     
@@ -165,9 +196,9 @@ object OfflineDataManager {
     ): Boolean = withContext(Dispatchers.IO) {
         if (thumbnailUrl.isEmpty()) return@withContext false
         
+        val thumbnailFile = resolveThumbnailFile(context, videoId) ?: return@withContext false
+        
         try {
-            val thumbnailFile = File(getThumbnailFolder(context), "$videoId.jpg")
-            
             if (thumbnailFile.exists() && thumbnailFile.length() > 0) {
                 return@withContext true
             }
@@ -197,9 +228,9 @@ object OfflineDataManager {
      * Get the effective thumbnail URL (local if cached, remote otherwise)
      */
     fun getEffectiveThumbnailUrl(context: Context, videoId: String, remoteUrl: String): String {
-        val localPath = getLocalThumbnailPath(context, videoId)
-        return if (File(localPath).exists() && File(localPath).length() > 0) {
-            "file://$localPath"
+        val file = resolveThumbnailFile(context, videoId)
+        return if (file != null && file.exists() && file.length() > 0) {
+            "file://${file.absolutePath}"
         } else {
             remoteUrl
         }

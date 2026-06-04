@@ -76,7 +76,6 @@ fun WhatsNewScreen(onBack: () -> Unit) {
                 version = "1.0.0",
                 date = "March 2026",
                 items = listOf(
-                    ChangeItem(ChangeType.FEATURE, "Admin Panel", "Complete admin dashboard for managing hero videos, normal videos, and viewing support tickets"),
                     ChangeItem(ChangeType.FEATURE, "Playlist Mode", "Play all videos in a category with premium playlist UI"),
                     ChangeItem(ChangeType.FEATURE, "Offline Mode", "Download videos for offline viewing with Offload App toggle"),
                     ChangeItem(ChangeType.FEATURE, "Captions Support", "CC button with English and Hindi subtitle support"),

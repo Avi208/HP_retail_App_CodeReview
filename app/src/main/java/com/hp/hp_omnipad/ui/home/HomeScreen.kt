@@ -47,7 +47,6 @@ import com.hp.hp_omnipad.R
 import com.hp.hp_omnipad.ui.home.navigation.BottomNavItem
 import com.hp.hp_omnipad.ui.home.home.HomeTabScreen
 import com.hp.hp_omnipad.ui.home.categories.LibraryScreen
-import com.hp.hp_omnipad.ui.admin.AdminScreen
 import com.hp.hp_omnipad.ui.home.settings.SettingsScreen
 import com.hp.hp_omnipad.ui.home.settings.SettingsViewModel
 import com.hp.hp_omnipad.ui.home.settings.screens.PrivacyPolicyScreen
