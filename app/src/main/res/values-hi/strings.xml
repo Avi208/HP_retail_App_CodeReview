@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Omni Pad</string>
+
+    <!-- Settings -->
+    <string name="home">होम</string>
+    <string name="settings">सेटिंग्स</string>
+    <string name="preferences">प्राथमिकताएं</string>
+    <string name="manage_preferences">अपनी प्राथमिकताएं और खाता प्रबंधित करें</string>
+
+    <string name="app_description">आपके व्यापार संचालन को कुशलतापूर्वक प्रबंधित करने और विकास को बढ़ाने के लिए एक शक्तिशाली रिटेल समाधान।</string>
+
+    <string name="version_label">संस्करण %1$s</string>
+
+    <string name="whats_new">नया क्या है</string>
+    <string name="privacy_policy">गोपनीयता नीति</string>
+    <string name="contact_support">सहायता से संपर्क करें</string>
+
+    <!-- Preferences -->
+    <string name="push_notifications">पुश सूचनाएं</string>
+    <string name="notification_subtitle">अलर्ट, ध्वनि और बैज</string>
+    <string name="language">भाषा</string>
+    <string name="theme">थीम</string>
+    <string name="light_theme">लाइट</string>
+    <string name="dark_theme">डार्क</string>
+    <string name="stay_awake">जागते रहें</string>
+    <string name="stay_awake_subtitle">स्क्रीन को बंद होने से रोकें</string>
+
+    <!-- Security -->
+    <string name="security_settings">सुरक्षा सेटिंग्स</string>
+    <string name="app_data_privacy">ऐप डेटा और गोपनीयता</string>
+    <string name="clear_cache">कैश साफ़ करें</string>
+    <string name="clear_cache_subtitle">स्टोरेज स्थान खाली करें</string>
+    <string name="clear_app_data">ऐप डेटा साफ़ करें</string>
+    <string name="clear_app_data_subtitle">ऐप को डिफ़ॉल्ट स्थिति में रीसेट करें</string>
+    <string name="terms_of_service">सेवा की शर्तें</string>
+    <string name="terms_subtitle">नियम और शर्तें देखें</string>
+    <string name="logout">लॉग आउट</string>
+
+    <!-- Splash -->
+    <string name="splash_tagline">स्मार्ट कॉमर्स समाधान</string>
+    <string name="initializing">वातावरण प्रारंभ हो रहा है…</string>
+    <string name="no_internet">इंटरनेट कनेक्शन नहीं</string>
+    <string name="check_network">कृपया अपना नेटवर्क जांचें और पुनः प्रयास करें।</string>
+    <string name="retry">पुनः प्रयास करें</string>
+
+    <!-- Home -->
+    <string name="categories">श्रेणियां</string>
+    <string name="recently_added">हाल ही में जोड़े गए</string>
+    <string name="view_all">सभी देखें</string>
+    <string name="play_all">सभी चलाएं</string>
+    <string name="now_playing">अभी चल रहा है</string>
+    <string name="up_next">आगे</string>
+
+    <!-- Video -->
+    <string name="download">डाउनलोड</string>
+    <string name="save">सहेजें</string>
+    <string name="saved">सहेजा गया</string>
+    <string name="saving">सहेज रहा है…</string>
+    <string name="back_to_library">लाइब्रेरी पर वापस जाएं</string>
+    <string name="now_playing_section">अभी चल रहा है</string>
+    <string name="related_resources">संबंधित संसाधन</string>
+    <string name="connection_lost">कनैक्शन टूट गया</string>
+    <string name="check_internet">कृपया अपना इंटरनेट कनेक्शन जांचें</string>
+    <string name="download_started">डाउनलोड शुरू हुआ</string>
+    <string name="check_notification_progress">प्रगति के लिए सूचना जांचें</string>
+
+    <!-- Offline -->
+    <string name="no_downloaded_videos">कोई डाउनलोड किया गया वीडियो नहीं</string>
+    <string name="videos_download_appear">जो वीडियो आप डाउनलोड करेंगे वे यहां दिखाई देंगे</string>
+    <string name="videos_downloaded">%1$d वीडियो डाउनलोड किए गए</string>
+    <string name="offline">ऑफलाइन</string>
+    <string name="showing_downloaded_videos">डाउनलोड किए गए वीडियो दिखा रहा है</string>
+    <string name="delete">हटाएं</string>
+    <string name="delete_video">वीडियो हटाएं?</string>
+    <string name="delete_video_confirm">क्या आप वाकई \"%1$s\" को हटाना चाहते हैं? इससे %2$s खाली होगा।</string>
+    <string name="cancel">रद्द करें</string>
+
+    <!-- Dialogs -->
+    <string name="battery_warning">बैटरी चेतावनी</string>
+    <string name="battery_warning_message">स्क्रीन को जागते रखने से अधिक बैटरी खर्च होगी। यह सुविधा ऐप खुली होने पर स्क्रीन को बंद होने से रोकती है।\n\nक्या आप वाकई इसे सक्षम करना चाहते हैं?</string>
+    <string name="enable_anyway">फिर भी सक्षम करें</string>
+    <string name="clear_data_title">ऐप डेटा साफ़ करें?</string>
+    <string name="clear_data_message">यह सभी डाउनलोड किए गए वीडियो, कैश डेटा और आपकी प्राथमिकताओं को हटा देगा। यह क्रिया पूर्ववत नहीं की जा सकती।</string>
+    <string name="clear_data">डेटा साफ़ करें</string>
+
+    <!-- Languages -->
+    <string name="english">अंग्रेज़ी</string>
+    <string name="hindi">हिंदी</string>
+    <string name="spanish">स्पेनिश</string>
+
+    <string name="ready">तैयार</string>
+    <string name="reconnecting">पुनः कनेक्ट हो रहा है…</string>
+    <string name="youtube_offline_warning">यह YouTube वीडियो ऑफलाइन नहीं चलाया जा सकता</string>
+    <string name="requires_internet">इंटरनेट कनेक्शन की आवश्यकता है</string>
+
+    <string name="playing_video_count">%1$d में से %2$d चल रहा है</string>
+    <string name="video_count_label">%1$d में से वीडियो %2$d</string>
+    <string name="developer_settings">डेवलपर सेटिंग्स</string>
+
+    <!-- Support -->
+    <string name="support_available_24_7">24/7 सहायता उपलब्ध है</string>
+    <string name="support_form_description">नीचे दिया गया फॉर्म भरें और हमारी टीम 24 घंटों के भीतर जवाब देगी।</string>
+    <string name="ticket_submitted">टिकट जमा किया गया!</string>
+    <string name="ticket_submitted_thanks">हमसे संपर्क करने के लिए धन्यवाद।\nहम जल्द ही आपसे संपर्क करेंगे।</string>
+    <string name="contact_support_subtitle">हम यहाँ मदद करने के लिए हैं</string>
+    <string name="submit_ticket">टिकट जमा करें</string>
+    <string name="full_name">पूरा नाम</string>
+    <string name="email_address">ईमेल पता</string>
+    <string name="category">श्रेणी</string>
+    <string name="priority">प्राथमिकता</string>
+    <string name="subject">विषय</string>
+    <string name="describe_issue">अपनी समस्या का वर्णन करें</string>
+    <string name="other_ways_to_reach_us">हम तक पहुँचने के अन्य तरीके</string>
+    <string name="low">कम</string>
+    <string name="medium">मध्यम</string>
+    <string name="high">उच्च</string>
+    <string name="general_inquiry">सामान्य पूछताछ</string>
+    <string name="bug_report">बग रिपोर्ट</string>
+    <string name="feature_request">सुविधा अनुरोध</string>
+    <string name="account_issue">खाता समस्या</string>
+    <string name="video_playback">वीडियो प्लेबैक</string>
+    <string name="other">अन्य</string>
+    <string name="privacy_terms_subtitle">हमारी गोपनीयता शर्तें देखें</string>
+    <string name="clear_cache_title">कैश साफ़ करें?</string>
+    <string name="clear_cache_message">इससे कैश्ड इमेज और वीडियो डेटा साफ़ हो जाएगा। आपके डाउनलोड किए गए वीडियो प्रभावित नहीं होंगे।</string>
+
+    <!-- Categories -->
+    <string name="demos">डेमो</string>
+    <string name="events">इवेंट्स</string>
+    <string name="promotional">प्रमोशनल</string>
+    <string name="training">ट्रेनिंग</string>
+    <string name="videos_count_label">%1$d वीडियो</string>
+
+</resources>

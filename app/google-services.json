@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "722688774542",
+    "project_id": "trainingapp-c606a",
+    "storage_bucket": "trainingapp-c606a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:722688774542:android:c97ffc1ddf5713d48754df",
+        "android_client_info": {
+          "package_name": "com.hp.hp_omnipad"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5P8oQaxTMSqWGWicnk9lY6WU9Kpvf2lw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "firebase-video-uploader",
+  "version": "1.0.0",
+  "description": "Script to add videos to Firebase Firestore",
+  "main": "add_videos.js",
+  "scripts": {
+    "add-videos": "node add_videos.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  }
+}

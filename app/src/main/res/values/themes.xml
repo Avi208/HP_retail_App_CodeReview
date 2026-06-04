@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Main App Theme -->
+    <style name="Theme.HpOmnipad" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
+
+    <!-- Splash Screen Theme -->
+    <style name="Theme.HpOmnipad.Splash" parent="Theme.SplashScreen">
+
+        <item name="windowSplashScreenBackground">@android:color/white</item>
+
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+
+        <item name="postSplashScreenTheme">@style/Theme.HpOmnipad</item>
+
+    </style>
+
+</resources>

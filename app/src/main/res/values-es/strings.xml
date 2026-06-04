@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Omni Pad</string>
+
+    <!-- Settings -->
+    <string name="home">Inicio</string>
+    <string name="settings">Configuración</string>
+    <string name="preferences">Preferencias</string>
+    <string name="manage_preferences">Administra tus preferencias y cuenta</string>
+
+    <string name="app_description">Una potente solución de retail para gestionar sus operaciones comerciales de manera eficiente y escalar su crecimiento.</string>
+
+    <string name="version_label">Versión %1$s</string>
+
+    <string name="whats_new">Novedades</string>
+    <string name="privacy_policy">Política de Privacidad</string>
+    <string name="contact_support">Contactar Soporte</string>
+
+    <!-- Preferences -->
+    <string name="push_notifications">Notificaciones Push</string>
+    <string name="notification_subtitle">Alerts, sonidos e insignias</string>
+    <string name="language">Idioma</string>
+    <string name="theme">Tema</string>
+    <string name="light_theme">Claro</string>
+    <string name="dark_theme">Oscuro</string>
+    <string name="stay_awake">Mantener Despierto</string>
+    <string name="stay_awake_subtitle">Evitar que la pantalla se apague</string>
+
+    <!-- Security -->
+    <string name="security_settings">Configuración de Seguridad</string>
+    <string name="app_data_privacy">Datos de la app y privacidad</string>
+    <string name="clear_cache">Limpiar Caché</string>
+    <string name="clear_cache_subtitle">Liberar espacio de almacenamiento</string>
+    <string name="clear_app_data">Borrar Datos de la App</string>
+    <string name="clear_app_data_subtitle">Restablecer la app al estado predeterminado</string>
+    <string name="terms_of_service">Términos de Servicio</string>
+    <string name="terms_subtitle">Ver términos y condiciones</string>
+    <string name="logout">Cerrar Sesión</string>
+
+    <!-- Splash -->
+    <string name="splash_tagline">Soluciones de Comercio Inteligente</string>
+    <string name="initializing">Inicializando entorno…</string>
+    <string name="no_internet">Sin Conexión a Internet</string>
+    <string name="check_network">Por favor verifique su red e intente nuevamente.</string>
+    <string name="retry">Reintentar</string>
+
+    <!-- Home -->
+    <string name="categories">Categorías</string>
+    <string name="recently_added">Añadidos Recientemente</string>
+    <string name="view_all">Ver Todo</string>
+    <string name="play_all">Reproducir Todo</string>
+    <string name="now_playing">REPRODUCIENDO AHORA</string>
+    <string name="up_next">SIGUIENTE</string>
+
+    <!-- Video -->
+    <string name="download">Descargar</string>
+    <string name="save">Guardar</string>
+    <string name="saved">Guardado</string>
+    <string name="saving">Guardando…</string>
+    <string name="back_to_library">Volver a la Biblioteca</string>
+    <string name="now_playing_section">Reproduciendo Ahora</string>
+    <string name="related_resources">Recursos Relacionados</string>
+    <string name="connection_lost">Conexión Perdida</string>
+    <string name="check_internet">Por favor verifique su conexión a internet</string>
+    <string name="download_started">Descarga Iniciada</string>
+    <string name="check_notification_progress">Verifique la notificación para ver el progreso</string>
+
+    <!-- Offline -->
+    <string name="no_downloaded_videos">Sin Videos Descargados</string>
+    <string name="videos_download_appear">Los videos que descargues aparecerán aquí</string>
+    <string name="videos_downloaded">%1$d video(s) descargado(s)</string>
+    <string name="offline">SIN CONEXIÓN</string>
+    <string name="showing_downloaded_videos">Mostrando videos descargados</string>
+    <string name="delete">Eliminar</string>
+    <string name="delete_video">¿Eliminar Video?</string>
+    <string name="delete_video_confirm">¿Estás seguro de que quieres eliminar \"%1$s\"? Esto liberará %2$s.</string>
+    <string name="copyright_label">Todos los derechos reservados</string>
+    <string name="cancel">Cancelar</string>
+
+    <!-- Dialogs -->
+    <string name="battery_warning">Advertencia de Batería</string>
+    <string name="battery_warning_message">Mantener la pantalla encendida consumirá más batería. Esta función evita que la pantalla se apague mientras la app está abierta.\n\n¿Estás seguro de que quieres habilitar esto?</string>
+    <string name="enable_anyway">Habilitar de Todos Modos</string>
+    <string name="clear_data_title">¿Borrar Datos de la App?</string>
+    <string name="clear_data_message">Esto eliminará todos los videos descargados, datos en caché y restablecerá tus preferencias. Esta acción no se puede deshacer.</string>
+    <string name="clear_data">Borrar Datos</string>
+
+    <!-- Languages -->
+    <string name="english">Inglés</string>
+    <string name="hindi">Hindi</string>
+    <string name="spanish">Español</string>
+
+    <string name="ready">Listo</string>
+    <string name="reconnecting">Reconectando…</string>
+    <string name="youtube_offline_warning">Este video de YouTube no se puede reproducir sin conexión</string>
+    <string name="requires_internet">Requiere conexión a Internet</string>
+
+    <string name="playing_video_count">Reproduciendo %1$d de %2$d</string>
+    <string name="video_count_label">Video %1$d de %2$d</string>
+    <string name="developer_settings">Configuración de desarrollador</string>
+
+</resources>
