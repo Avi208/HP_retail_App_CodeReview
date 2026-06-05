@@ -18,7 +18,6 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.net.HttpURLConnection
-import java.net.URL
 
 /**
  * Manages automatic downloading of all videos for offline use.
@@ -337,7 +336,11 @@ object VideoSyncManager {
         
         var connection: HttpURLConnection? = null
         try {
-            val url = URL(urlString)
+            val url = SafeUrls.toValidatedDownloadUrl(urlString)
+            if (url == null) {
+                Log.e(TAG, "Rejected download URL")
+                return false
+            }
             connection = url.openConnection() as HttpURLConnection
             connection.connectTimeout = 120000 
             connection.readTimeout = 120000
@@ -361,7 +364,11 @@ object VideoSyncManager {
                 responseCode == 303) {
                 val newUrl = connection.getHeaderField("Location")
                 connection.disconnect()
-                return if (newUrl != null) downloadFile(newUrl, destination) else false
+                return if (newUrl != null && SafeUrls.isPermittedDownloadUrl(newUrl)) {
+                    downloadFile(newUrl, destination)
+                } else {
+                    false
+                }
             }
 
             // 200 = Full file, 206 = Partial content (Successful resume)

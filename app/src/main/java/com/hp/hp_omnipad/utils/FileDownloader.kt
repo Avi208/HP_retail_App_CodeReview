@@ -9,7 +9,6 @@ import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.net.URL
 
 object FileDownloader {
 
@@ -219,7 +218,11 @@ object FileDownloader {
             Log.d("FileDownloader", "Starting thumbnail download from: $thumbnailUrl to ${thumbnailFile.absolutePath}")
 
             // Download directly using URL connection with timeout
-            val url = URL(thumbnailUrl)
+            val url = SafeUrls.toValidatedDownloadUrl(thumbnailUrl)
+            if (url == null) {
+                Log.w("FileDownloader", "Rejected thumbnail URL for video: $videoId")
+                return@withContext false
+            }
             val connection = url.openConnection().apply {
                 connectTimeout = 30000
                 readTimeout = 30000

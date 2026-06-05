@@ -10,7 +10,6 @@ import com.hp.hp_omnipad.ui.home.model.Hero
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.net.URL
 
 object OfflineDataManager {
     
@@ -184,7 +183,8 @@ object OfflineDataManager {
                 return@withContext true
             }
             
-            val url = URL(thumbnailUrl)
+            val url = SafeUrls.toValidatedDownloadUrl(thumbnailUrl)
+                ?: return@withContext false
             val connection = url.openConnection().apply {
                 connectTimeout = 30000
                 readTimeout = 30000
