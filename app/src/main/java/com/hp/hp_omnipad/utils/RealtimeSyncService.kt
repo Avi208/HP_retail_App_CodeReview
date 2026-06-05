@@ -147,7 +147,7 @@ object RealtimeSyncService {
                 if (folder != null && folder.exists()) {
                     val title = folder.name
                     folder.deleteRecursively()
-                    Log.d(TAG, "Deleted: $title")
+                    Log.d(TAG, "Deleted: ${SafeLog.sanitize(title)}")
                     _syncEvents.emit(SyncEvent.VideoRemoved(videoId, title))
                 }
             }
@@ -164,7 +164,7 @@ object RealtimeSyncService {
 
         serviceScope.launch {
             try {
-                Log.d(TAG, "Auto-downloading new video: ${video.title}")
+                Log.d(TAG, "Auto-downloading new video: ${SafeLog.sanitize(video.title)}")
                 SyncManager.startSync("Downloading: ${video.title}", 1, isDownloadingVideos = true)
                 VideoSyncManager.initialize(context)
                 val success = downloadVideo(video)
@@ -188,7 +188,7 @@ object RealtimeSyncService {
 
         serviceScope.launch {
             try {
-                Log.d(TAG, "Auto-downloading new hero: ${hero.title}")
+                Log.d(TAG, "Auto-downloading new hero: ${SafeLog.sanitize(hero.title)}")
                 SyncManager.startSync("Downloading: ${hero.title}", 1, isDownloadingVideos = true)
                 VideoSyncManager.initialize(context)
                 val success = downloadHero(hero)

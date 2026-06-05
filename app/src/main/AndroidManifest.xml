@@ -3,6 +3,7 @@
     package="com.hp.hp_omnipad">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.HIDE_OVERLAY_WINDOWS" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -25,15 +26,20 @@
 
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.HpOmnipad.Splash">
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.HpOmnipad.Splash" />
 
+        <activity-alias
+            android:name=".Launcher"
+            android:exported="true"
+            android:targetActivity=".MainActivity"
+            android:theme="@style/Theme.HpOmnipad.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-        </activity>
+        </activity-alias>
 
     </application>
 

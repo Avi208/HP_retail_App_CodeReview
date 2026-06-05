@@ -47,6 +47,12 @@ class MainActivity : ComponentActivity() {
         super.attachBaseContext(context)
     }
     
+    private fun isAllowedLaunchIntent(intent: Intent): Boolean {
+        val action = intent.action ?: return true
+        return action == Intent.ACTION_MAIN &&
+            intent.categories?.contains(Intent.CATEGORY_LAUNCHER) == true
+    }
+
     private fun updateLocale(context: Context, languageCode: String): Context {
         val locale = Locale.forLanguageTag(languageCode)
         Locale.setDefault(locale)
@@ -58,10 +64,18 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null && !isAllowedLaunchIntent(intent)) {
+            finish()
+            return
+        }
 
         installSplashScreen()
 
         super.onCreate(savedInstanceState)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            window.setHideOverlayWindows(true)
+        }
 
         askNotificationPermission()
 

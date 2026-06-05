@@ -319,7 +319,7 @@ object VideoSyncManager {
                 return@withContext false
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Sync error for $title: ${e.message}")
+            Log.e(TAG, "Sync error for ${SafeLog.sanitize(title)}: ${SafeLog.sanitize(e.message)}")
             false
         }
     }
@@ -374,7 +374,7 @@ object VideoSyncManager {
             // 200 = Full file, 206 = Partial content (Successful resume)
             val isResuming = (responseCode == HttpURLConnection.HTTP_PARTIAL)
             if (responseCode != HttpURLConnection.HTTP_OK && !isResuming) {
-                Log.e(TAG, "❌ HTTP error $responseCode for: $urlString")
+                Log.e(TAG, "❌ HTTP error $responseCode for: ${SafeLog.sanitize(urlString)}")
                 return false
             }
 

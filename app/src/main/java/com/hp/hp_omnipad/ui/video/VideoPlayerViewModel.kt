@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import com.hp.hp_omnipad.ui.home.model.VideoItem
 import com.hp.hp_omnipad.utils.SafeFilePaths
+import com.hp.hp_omnipad.utils.SafeLog
 
 data class VideoQuality(
     val label: String,
@@ -294,7 +295,7 @@ class VideoPlayerViewModel(
     
     fun setVideoQuality(quality: String) {
         _selectedQuality.value = quality
-        Log.d(TAG, "Setting video quality to: $quality")
+        Log.d(TAG, "Setting video quality to: ${SafeLog.sanitize(quality)}")
         
         val currentPosition = exoPlayer.currentPosition
         val wasPlaying = exoPlayer.isPlaying
@@ -332,7 +333,7 @@ class VideoPlayerViewModel(
             }
         }
         
-        Log.d(TAG, "Quality changed to: $quality, seeking to: $currentPosition")
+        Log.d(TAG, "Quality changed to: ${SafeLog.sanitize(quality)}, seeking to: $currentPosition")
     }
     
     private fun applyQualityOverride(targetHeight: Int) {
@@ -428,7 +429,7 @@ class VideoPlayerViewModel(
     fun playVideo(video: VideoItem) {
         val url = video.videoUrl
         val uri = toPlaybackUri(url) ?: run {
-            Log.w(TAG, "Rejected playback URL: $url")
+            Log.w(TAG, "Rejected playback URL: ${SafeLog.sanitize(url)}")
             return
         }
 
@@ -446,7 +447,7 @@ class VideoPlayerViewModel(
             else
                 Player.REPEAT_MODE_ONE
 
-        Log.d(TAG, "Playing next video: ${video.title}")
+        Log.d(TAG, "Playing next video: ${SafeLog.sanitize(video.title)}")
     }
 
     private fun checkCurrentConnection(): Boolean {
@@ -459,7 +460,7 @@ class VideoPlayerViewModel(
 
     fun prepare(path: String, autoPlay: Boolean = false) {
         val uri = toPlaybackUri(path) ?: run {
-            Log.w(TAG, "Rejected playback path: $path")
+            Log.w(TAG, "Rejected playback path: ${SafeLog.sanitize(path)}")
             return
         }
 
@@ -468,7 +469,7 @@ class VideoPlayerViewModel(
 
         // Guard: never attempt remote load when offline
         if (!isPlayingLocalFile && !checkCurrentConnection()) {
-            Log.w(TAG, "Skipping prepare — offline and no local file: $path")
+            Log.w(TAG, "Skipping prepare — offline and no local file: ${SafeLog.sanitize(path)}")
             return
         }
 

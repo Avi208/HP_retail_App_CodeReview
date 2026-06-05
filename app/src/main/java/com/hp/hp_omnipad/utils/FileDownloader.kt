@@ -194,14 +194,14 @@ object FileDownloader {
         videoId: String
     ): Boolean = withContext(Dispatchers.IO) {
         if (thumbnailUrl.isEmpty()) {
-            Log.w("FileDownloader", "Thumbnail URL is empty for video: $videoId")
+            Log.w("FileDownloader", "Thumbnail URL is empty for video: ${SafeLog.sanitize(videoId)}")
             return@withContext false
         }
 
         try {
             val folder = findFolderByVideoId(videoId)
             if (folder == null) {
-                Log.e("FileDownloader", "Video folder not found for ID: $videoId")
+                Log.e("FileDownloader", "Video folder not found for ID: ${SafeLog.sanitize(videoId)}")
                 return@withContext false
             }
             
@@ -215,7 +215,10 @@ object FileDownloader {
             // Save thumbnail URL for retry attempts
             saveThumbnailUrl(videoId, thumbnailUrl)
 
-            Log.d("FileDownloader", "Starting thumbnail download from: $thumbnailUrl to ${thumbnailFile.absolutePath}")
+            Log.d(
+                "FileDownloader",
+                "Starting thumbnail download from: ${SafeLog.sanitize(thumbnailUrl)} to ${SafeLog.sanitize(thumbnailFile.absolutePath)}"
+            )
 
             // Download directly using URL connection with timeout
             val url = SafeUrls.toValidatedDownloadUrl(thumbnailUrl)
