@@ -24,7 +24,6 @@ import com.hp.hp_omnipad.ui.home.settings.SettingsViewModel
 import com.hp.hp_omnipad.ui.theme.HpOmnipadTheme
 import com.hp.hp_omnipad.ui.theme.ThemeViewModel
 import com.hp.hp_omnipad.utils.VideoSyncManager
-import com.hp.hp_omnipad.utils.WebViewSecurity
 import java.util.Locale
 import android.view.KeyEvent
 
@@ -73,8 +72,6 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
 
         super.onCreate(savedInstanceState)
-
-        WebViewSecurity.initialize()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             window.setHideOverlayWindows(true)

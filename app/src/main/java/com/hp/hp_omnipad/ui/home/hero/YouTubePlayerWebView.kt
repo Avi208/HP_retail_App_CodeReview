@@ -9,8 +9,7 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
-import com.hp.hp_omnipad.utils.SecureWebViewClient
-import com.hp.hp_omnipad.utils.SecurityResponseHeaders
+import android.webkit.WebViewClient
 import android.widget.FrameLayout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -150,7 +149,7 @@ fun YouTubePlayerWebView(
                 }
             }
 
-            webViewClient = SecureWebViewClient()
+            webViewClient = WebViewClient()
 
             setBackgroundColor(android.graphics.Color.BLACK)
         }
@@ -166,15 +165,6 @@ fun YouTubePlayerWebView(
                 <!DOCTYPE html>
                 <html>
                 <head>
-                    <meta http-equiv="Strict-Transport-Security"
-                        content="max-age=31536000; includeSubDomains">
-                    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-                    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
-                    <meta http-equiv="Content-Security-Policy"
-                        content="${SecurityResponseHeaders.YOUTUBE_EMBED_CSP}">
-                    <meta http-equiv="Referrer-Policy"
-                        content="strict-origin-when-cross-origin">
-                    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
                     <meta name="viewport"
                         content="width=device-width, initial-scale=1.0">
 
