@@ -1,7 +1,6 @@
 package com.hp.hp_omnipad.utils
 
 import android.content.Context
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.hp.hp_omnipad.data.remote.model.VideoDto
 import com.hp.hp_omnipad.data.repository.FirestoreRepository
@@ -47,7 +46,7 @@ object RealtimeSyncService {
 
     fun initialize(context: Context) {
         appContext = context.applicationContext
-        Log.d(TAG, "RealtimeSyncService initialized")
+        SafeLog.d(TAG) { text("RealtimeSyncService initialized") }
     }
 
     /**
@@ -59,12 +58,12 @@ object RealtimeSyncService {
         context: Context
     ) {
         if (_isListening.value) {
-            Log.d(TAG, "Already running — skipping")
+            SafeLog.d(TAG) { text("Already running — skipping") }
             return
         }
 
         appContext = context.applicationContext
-        Log.d(TAG, "Starting sync with pre-fetched data (no duplicate Firebase call)")
+        SafeLog.d(TAG) { text("Starting sync with pre-fetched data (no duplicate Firebase call)") }
 
         // Run local cleanup using already-known IDs
         serviceScope.launch {
@@ -78,7 +77,7 @@ object RealtimeSyncService {
     }
 
     fun stopListening() {
-        Log.d(TAG, "Stopping sync service")
+        SafeLog.d(TAG) { text("Stopping sync service") }
         _isListening.value = false
     }
 
@@ -92,7 +91,7 @@ object RealtimeSyncService {
                 if (!_isListening.value) break
 
                 try {
-                    Log.d(TAG, "Hourly refresh — checking for changes")
+                    SafeLog.d(TAG) { text("Hourly refresh — checking for changes") }
 
                     val videos = FirestoreRepository.getVideos()
                     val heroes = HeroRepository.getHeroes()
@@ -117,10 +116,10 @@ object RealtimeSyncService {
                     cleanupWithKnownData(publishedVideoIds, activeHeroIds)
 
                     _syncEvents.emit(SyncEvent.DataChanged)
-                    Log.d(TAG, "Hourly refresh complete")
+                    SafeLog.d(TAG) { text("Hourly refresh complete") }
 
                 } catch (e: Exception) {
-                    Log.e(TAG, "Hourly refresh error: ${e.message}")
+                    SafeLog.e(TAG) { text("Hourly refresh error: "); value(e.message) }
                 }
             }
         }
@@ -141,19 +140,22 @@ object RealtimeSyncService {
         val toDelete = localVideoIds.filter { it !in validIds }
 
         if (toDelete.isNotEmpty()) {
-            Log.d(TAG, "Removing ${toDelete.size} unpublished/inactive local videos")
+            SafeLog.d(TAG) {
+                text("Removing "); value(toDelete.size)
+                text(" unpublished/inactive local videos")
+            }
             for (videoId in toDelete) {
                 val folder = VideoSyncManager.findVideoFolder(videoId)
                 if (folder != null && folder.exists()) {
                     val title = folder.name
                     folder.deleteRecursively()
-                    Log.d(TAG, "Deleted: ${SafeLog.sanitize(title)}")
+                    SafeLog.d(TAG) { text("Deleted: "); value(title) }
                     _syncEvents.emit(SyncEvent.VideoRemoved(videoId, title))
                 }
             }
             _syncEvents.emit(SyncEvent.DataChanged)
         } else {
-            Log.d(TAG, "No local videos to clean up")
+            SafeLog.d(TAG) { text("No local videos to clean up") }
         }
     }
 
@@ -164,7 +166,7 @@ object RealtimeSyncService {
 
         serviceScope.launch {
             try {
-                Log.d(TAG, "Auto-downloading new video: ${SafeLog.sanitize(video.title)}")
+                SafeLog.d(TAG) { text("Auto-downloading new video: "); value(video.title) }
                 SyncManager.startSync("Downloading: ${video.title}", 1, isDownloadingVideos = true)
                 VideoSyncManager.initialize(context)
                 val success = downloadVideo(video)
@@ -176,7 +178,7 @@ object RealtimeSyncService {
                     SyncManager.completeSync(0, 0, 1)
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error auto-downloading video: ${e.message}")
+                SafeLog.e(TAG) { text("Error auto-downloading video: "); value(e.message) }
             }
         }
     }
@@ -188,7 +190,7 @@ object RealtimeSyncService {
 
         serviceScope.launch {
             try {
-                Log.d(TAG, "Auto-downloading new hero: ${SafeLog.sanitize(hero.title)}")
+                SafeLog.d(TAG) { text("Auto-downloading new hero: "); value(hero.title) }
                 SyncManager.startSync("Downloading: ${hero.title}", 1, isDownloadingVideos = true)
                 VideoSyncManager.initialize(context)
                 val success = downloadHero(hero)
@@ -200,7 +202,7 @@ object RealtimeSyncService {
                     SyncManager.completeSync(0, 0, 1)
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error auto-downloading hero: ${e.message}")
+                SafeLog.e(TAG) { text("Error auto-downloading hero: "); value(e.message) }
             }
         }
     }
@@ -218,7 +220,7 @@ object RealtimeSyncService {
                 isHero       = false
             )
         } catch (e: Exception) {
-            Log.e(TAG, "Download error: ${e.message}")
+            SafeLog.e(TAG) { text("Download error: "); value(e.message) }
             false
         }
     }
@@ -236,7 +238,7 @@ object RealtimeSyncService {
                 isHero       = true
             )
         } catch (e: Exception) {
-            Log.e(TAG, "Download error: ${e.message}")
+            SafeLog.e(TAG) { text("Download error: "); value(e.message) }
             false
         }
     }

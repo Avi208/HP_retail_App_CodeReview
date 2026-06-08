@@ -1,7 +1,6 @@
 package com.hp.hp_omnipad.utils
 
 import android.content.Context
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hp.hp_omnipad.data.remote.model.CategoryDto
@@ -31,9 +30,9 @@ object OfflineDataManager {
             val file = File(context.filesDir, VIDEOS_CACHE_FILE)
             val json = gson.toJson(videos)
             file.writeText(json)
-            Log.d(TAG, "Saved ${videos.size} videos to cache")
+            SafeLog.d(TAG) { text("Saved "); value(videos.size); text(" videos to cache") }
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to save videos to cache: ${e.message}")
+            SafeLog.e(TAG) { text("Failed to save videos to cache: "); value(e.message) }
         }
     }
     
@@ -48,10 +47,10 @@ object OfflineDataManager {
             val json = file.readText()
             val type = object : TypeToken<List<VideoDto>>() {}.type
             val videos: List<VideoDto> = gson.fromJson(json, type)
-            Log.d(TAG, "Loaded ${videos.size} videos from cache")
+            SafeLog.d(TAG) { text("Loaded "); value(videos.size); text(" videos from cache") }
             videos
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to load videos from cache: ${e.message}")
+            SafeLog.e(TAG) { text("Failed to load videos from cache: "); value(e.message) }
             null
         }
     }
@@ -66,9 +65,9 @@ object OfflineDataManager {
             val file = File(context.filesDir, CATEGORIES_CACHE_FILE)
             val json = gson.toJson(categories)
             file.writeText(json)
-            Log.d(TAG, "Saved ${categories.size} categories to cache")
+            SafeLog.d(TAG) { text("Saved "); value(categories.size); text(" categories to cache") }
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to save categories to cache: ${e.message}")
+            SafeLog.e(TAG) { text("Failed to save categories to cache: "); value(e.message) }
         }
     }
     
@@ -83,10 +82,10 @@ object OfflineDataManager {
             val json = file.readText()
             val type = object : TypeToken<List<CategoryDto>>() {}.type
             val categories: List<CategoryDto> = gson.fromJson(json, type)
-            Log.d(TAG, "Loaded ${categories.size} categories from cache")
+            SafeLog.d(TAG) { text("Loaded "); value(categories.size); text(" categories from cache") }
             categories
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to load categories from cache: ${e.message}")
+            SafeLog.e(TAG) { text("Failed to load categories from cache: "); value(e.message) }
             null
         }
     }
@@ -101,9 +100,9 @@ object OfflineDataManager {
             val file = File(context.filesDir, HEROES_CACHE_FILE)
             val json = gson.toJson(heroes)
             file.writeText(json)
-            Log.d(TAG, "Saved ${heroes.size} heroes to cache")
+            SafeLog.d(TAG) { text("Saved "); value(heroes.size); text(" heroes to cache") }
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to save heroes to cache: ${e.message}")
+            SafeLog.e(TAG) { text("Failed to save heroes to cache: "); value(e.message) }
         }
     }
     
@@ -118,10 +117,10 @@ object OfflineDataManager {
             val json = file.readText()
             val type = object : TypeToken<List<Hero>>() {}.type
             val heroes: List<Hero> = gson.fromJson(json, type)
-            Log.d(TAG, "Loaded ${heroes.size} heroes from cache")
+            SafeLog.d(TAG) { text("Loaded "); value(heroes.size); text(" heroes from cache") }
             heroes
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to load heroes from cache: ${e.message}")
+            SafeLog.e(TAG) { text("Failed to load heroes from cache: "); value(e.message) }
             null
         }
     }
@@ -146,7 +145,7 @@ object OfflineDataManager {
         val safeId = SafeFilePaths.sanitizeVideoId(videoId) ?: return null
         val file = SafeFilePaths.resolveChildFile(getThumbnailFolder(context), "$safeId.jpg")
         if (file == null) {
-            Log.w(TAG, "Rejected thumbnail path for video id: ${SafeLog.sanitize(videoId)}")
+            SafeLog.w(TAG) { text("Rejected thumbnail path for video id: "); value(videoId) }
         }
         return file
     }
@@ -197,10 +196,13 @@ object OfflineDataManager {
                 }
             }
             
-            Log.d(TAG, "Cached thumbnail for video: ${SafeLog.sanitize(videoId)}")
+            SafeLog.d(TAG) { text("Cached thumbnail for video: "); value(videoId) }
             true
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to cache thumbnail for ${SafeLog.sanitize(videoId)}: ${SafeLog.sanitize(e.message)}")
+            SafeLog.e(TAG) {
+                text("Failed to cache thumbnail for "); value(videoId)
+                text(": "); value(e.message)
+            }
             false
         }
     }
@@ -241,9 +243,9 @@ object OfflineDataManager {
             File(context.filesDir, CATEGORIES_CACHE_FILE).delete()
             File(context.filesDir, HEROES_CACHE_FILE).delete()
             getThumbnailFolder(context).deleteRecursively()
-            Log.d(TAG, "Cleared all cache")
+            SafeLog.d(TAG) { text("Cleared all cache") }
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to clear cache: ${e.message}")
+            SafeLog.e(TAG) { text("Failed to clear cache: "); value(e.message) }
         }
     }
     
