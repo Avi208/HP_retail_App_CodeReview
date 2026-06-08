@@ -146,7 +146,7 @@ object OfflineDataManager {
         val safeId = SafeFilePaths.sanitizeVideoId(videoId) ?: return null
         val file = SafeFilePaths.resolveChildFile(getThumbnailFolder(context), "$safeId.jpg")
         if (file == null) {
-            SafeLog.w(TAG, "Rejected thumbnail path for video id: %s", videoId)
+            Log.w(TAG, "Rejected thumbnail path for video id: ${SafeLog.sanitize(videoId)}")
         }
         return file
     }
@@ -197,10 +197,10 @@ object OfflineDataManager {
                 }
             }
             
-            SafeLog.d(TAG, "Cached thumbnail for video: %s", videoId)
+            Log.d(TAG, "Cached thumbnail for video: ${SafeLog.sanitize(videoId)}")
             true
         } catch (e: Exception) {
-            SafeLog.e(TAG, "Failed to cache thumbnail for %s: %s", videoId, e.message)
+            Log.e(TAG, "Failed to cache thumbnail for ${SafeLog.sanitize(videoId)}: ${SafeLog.sanitize(e.message)}")
             false
         }
     }

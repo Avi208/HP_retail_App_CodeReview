@@ -8,6 +8,7 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -156,13 +157,13 @@ class VideoPlayerViewModel(
                         trackIndex = i,
                         groupIndex = groupIndex
                     ))
-                    SafeLog.d(TAG, "Found subtitle track: %s (%s)", label, language)
+                    Log.d(TAG, "Found subtitle track: $label ($language)")
                 }
             }
         }
         
         _availableSubtitles.value = subtitles
-        SafeLog.d(TAG, "Available subtitles: %s", subtitles.joinToString { it.label })
+        Log.d(TAG, "Available subtitles: ${subtitles.map { it.label }}")
     }
     
     private fun getLanguageLabel(languageCode: String): String {
@@ -194,7 +195,7 @@ class VideoPlayerViewModel(
             disableSubtitles()
         }
         
-        SafeLog.d(TAG, "Captions toggled: %s", _captionsEnabled.value)
+        Log.d(TAG, "Captions toggled: ${_captionsEnabled.value}")
     }
     
     fun selectSubtitle(subtitle: SubtitleTrack) {
@@ -214,7 +215,7 @@ class VideoPlayerViewModel(
                         .addOverride(override)
                         .setIgnoredTextSelectionFlags(C.SELECTION_FLAG_DEFAULT.inv())
                 )
-                SafeLog.d(TAG, "Selected subtitle: %s", subtitle.label)
+                Log.d(TAG, "Selected subtitle: ${subtitle.label}")
                 break
             }
         }
@@ -227,7 +228,7 @@ class VideoPlayerViewModel(
                 .setIgnoredTextSelectionFlags(C.SELECTION_FLAG_DEFAULT)
                 .setRendererDisabled(C.TRACK_TYPE_TEXT, true)
         )
-        SafeLog.d(TAG, "Subtitles disabled")
+        Log.d(TAG, "Subtitles disabled")
     }
     
     fun setCaptionsEnabled(enabled: Boolean) {
@@ -263,7 +264,7 @@ class VideoPlayerViewModel(
             availableHeights.sortedDescending().forEach { height ->
                 qualities.add(VideoQuality("${height}p", height))
             }
-            SafeLog.d(TAG, "Adaptive stream detected with %s video tracks", trackCount)
+            Log.d(TAG, "Adaptive stream detected with ${trackCount} video tracks")
         } else {
             // For single-track MP4 files, provide standard quality options as rendering constraints
             val standardQualities = listOf(1080, 720, 480, 360, 240)
@@ -278,13 +279,13 @@ class VideoPlayerViewModel(
             if (maxHeight > 0 && !standardQualities.contains(maxHeight)) {
                 qualities.add(1, VideoQuality("${maxHeight}p (Source)", maxHeight))
             }
-            SafeLog.d(TAG, "Single-track video detected, source: %sp", maxHeight)
+            Log.d(TAG, "Single-track video detected, source: ${maxHeight}p")
         }
         
         // Sort: Auto first, then by height descending
         qualities.sortWith(compareBy({ !it.isAuto }, { -it.height }))
         _availableQualities.value = qualities
-        SafeLog.d(TAG, "Available qualities: %s", qualities.joinToString { it.label })
+        Log.d(TAG, "Available qualities: ${qualities.map { it.label }}")
     }
     
     private fun applyInitialQualitySetting() {
@@ -294,7 +295,7 @@ class VideoPlayerViewModel(
     
     fun setVideoQuality(quality: String) {
         _selectedQuality.value = quality
-        SafeLog.d(TAG, "Setting video quality to: %s", quality)
+        Log.d(TAG, "Setting video quality to: ${SafeLog.sanitize(quality)}")
         
         val currentPosition = exoPlayer.currentPosition
         val wasPlaying = exoPlayer.isPlaying
@@ -332,7 +333,7 @@ class VideoPlayerViewModel(
             }
         }
         
-        SafeLog.d(TAG, "Quality changed to: %s, seeking to: %s", quality, currentPosition)
+        Log.d(TAG, "Quality changed to: ${SafeLog.sanitize(quality)}, seeking to: $currentPosition")
     }
     
     private fun applyQualityOverride(targetHeight: Int) {
@@ -364,7 +365,7 @@ class VideoPlayerViewModel(
                             .clearOverridesOfType(C.TRACK_TYPE_VIDEO)
                             .addOverride(override)
                     )
-                    SafeLog.d(TAG, "Applied track override: index=%s for %sp", bestTrackIndex, targetHeight)
+                    Log.d(TAG, "Applied track override: index=$bestTrackIndex for ${targetHeight}p")
                 }
             }
         }
@@ -428,7 +429,7 @@ class VideoPlayerViewModel(
     fun playVideo(video: VideoItem) {
         val url = video.videoUrl
         val uri = toPlaybackUri(url) ?: run {
-            SafeLog.w(TAG, "Rejected playback URL: %s", url)
+            Log.w(TAG, "Rejected playback URL: ${SafeLog.sanitize(url)}")
             return
         }
 
@@ -446,7 +447,7 @@ class VideoPlayerViewModel(
             else
                 Player.REPEAT_MODE_ONE
 
-        SafeLog.d(TAG, "Playing next video: %s", video.title)
+        Log.d(TAG, "Playing next video: ${SafeLog.sanitize(video.title)}")
     }
 
     private fun checkCurrentConnection(): Boolean {
@@ -459,7 +460,7 @@ class VideoPlayerViewModel(
 
     fun prepare(path: String, autoPlay: Boolean = false) {
         val uri = toPlaybackUri(path) ?: run {
-            SafeLog.w(TAG, "Rejected playback path: %s", path)
+            Log.w(TAG, "Rejected playback path: ${SafeLog.sanitize(path)}")
             return
         }
 
@@ -468,7 +469,7 @@ class VideoPlayerViewModel(
 
         // Guard: never attempt remote load when offline
         if (!isPlayingLocalFile && !checkCurrentConnection()) {
-            SafeLog.w(TAG, "Skipping prepare — offline and no local file: %s", path)
+            Log.w(TAG, "Skipping prepare — offline and no local file: ${SafeLog.sanitize(path)}")
             return
         }
 
@@ -493,15 +494,15 @@ class VideoPlayerViewModel(
             val newValue = !_autoplayEnabled.value
             _autoplayEnabled.value = newValue
 
-        SafeLog.d("AUTOPLAY_VM", "State changed: %s", newValue)
+        Log.d("AUTOPLAY_VM", "State changed → $newValue")
             SettingsViewModel.setAutoplayEnabled(appContext, newValue)
 
             exoPlayer.repeatMode =
                 if (newValue) Player.REPEAT_MODE_OFF
                 else Player.REPEAT_MODE_ONE
 
-        SafeLog.d(TAG, "Autoplay changed: %s", newValue)
-        SafeLog.d("AUTOPLAY", "Toggle clicked, autoplay = %s", newValue)
+        Log.d(TAG, "Autoplay changed → $newValue")
+        Log.d("AUTOPLAY", "Toggle clicked → autoplay = $newValue")
     }
 
     fun savePlayerState() {

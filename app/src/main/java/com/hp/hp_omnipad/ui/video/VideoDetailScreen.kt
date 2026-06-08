@@ -38,7 +38,6 @@ import com.hp.hp_omnipad.ui.home.model.VideoItem
 import com.hp.hp_omnipad.ui.home.model.Resource
 import com.hp.hp_omnipad.utils.DownloadStatus
 import com.hp.hp_omnipad.utils.FileDownloader
-import com.hp.hp_omnipad.utils.SafeLog
 import com.hp.hp_omnipad.utils.VideoSyncManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -127,7 +126,7 @@ fun VideoDetailScreen(
                         currentIndex < currentList.size - 1 -> currentList[currentIndex + 1]
                         else -> null
                     }
-                    SafeLog.d("AUTOPLAY", "Next video = %s", nextVideo?.title)
+                    Log.d("AUTOPLAY", "Next video = ${nextVideo?.title}")
 
                     nextVideo?.let {
                         //playerViewModel.playVideo(it) // 🔥 better than direct state mutation
