@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hp.hp_omnipad">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.HIDE_OVERLAY_WINDOWS" />
@@ -31,16 +31,28 @@
             android:launchMode="singleTask"
             android:theme="@style/Theme.HpOmnipad.Splash" />
 
-        <activity-alias
-            android:name=".Launcher"
+        <activity
+            android:name=".LauncherActivity"
             android:exported="true"
-            android:targetActivity=".MainActivity"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.HpOmnipad.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity-alias>
+        </activity>
+
+        <!-- Debug tooling manifests export these; lock down for CWE-926 (debug APK scans). -->
+        <activity
+            android:name="androidx.activity.ComponentActivity"
+            android:exported="false"
+            tools:node="merge"
+            tools:replace="android:exported" />
+        <activity
+            android:name="androidx.compose.ui.tooling.PreviewActivity"
+            android:exported="false"
+            tools:node="merge"
+            tools:replace="android:exported" />
 
     </application>
 
