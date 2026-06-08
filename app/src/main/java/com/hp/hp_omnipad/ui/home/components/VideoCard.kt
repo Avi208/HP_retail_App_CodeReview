@@ -1,6 +1,5 @@
 package com.hp.hp_omnipad.ui.home.components
 
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.Spring
@@ -35,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.hp.hp_omnipad.ui.home.model.VideoItem
+import com.hp.hp_omnipad.utils.SafeLog
 import com.hp.hp_omnipad.utils.VideoSyncManager
 import java.io.File
 
@@ -74,9 +74,9 @@ fun VideoCard(
         
         // Log render source
         if (isDownloaded) {
-            Log.d(TAG, " RENDERING OFFLINE: ${video.title} (ID: ${video.id})")
+            SafeLog.d(TAG, "RENDERING OFFLINE: %s (ID: %s)", video.title, video.id)
         } else {
-            Log.d(TAG, " RENDERING ONLINE: ${video.title} (ID: ${video.id})")
+            SafeLog.d(TAG, "RENDERING ONLINE: %s (ID: %s)", video.title, video.id)
         }
     }
     

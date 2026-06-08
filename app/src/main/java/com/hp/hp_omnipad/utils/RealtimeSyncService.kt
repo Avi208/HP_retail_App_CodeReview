@@ -120,7 +120,7 @@ object RealtimeSyncService {
                     Log.d(TAG, "Hourly refresh complete")
 
                 } catch (e: Exception) {
-                    Log.e(TAG, "Hourly refresh error: ${e.message}")
+                    SafeLog.e(TAG, "Hourly refresh error: %s", e.message)
                 }
             }
         }
@@ -147,7 +147,7 @@ object RealtimeSyncService {
                 if (folder != null && folder.exists()) {
                     val title = folder.name
                     folder.deleteRecursively()
-                    Log.d(TAG, "Deleted: ${SafeLog.sanitize(title)}")
+                    SafeLog.d(TAG, "Deleted: %s", title)
                     _syncEvents.emit(SyncEvent.VideoRemoved(videoId, title))
                 }
             }
@@ -164,7 +164,7 @@ object RealtimeSyncService {
 
         serviceScope.launch {
             try {
-                Log.d(TAG, "Auto-downloading new video: ${SafeLog.sanitize(video.title)}")
+                SafeLog.d(TAG, "Auto-downloading new video: %s", video.title)
                 SyncManager.startSync("Downloading: ${video.title}", 1, isDownloadingVideos = true)
                 VideoSyncManager.initialize(context)
                 val success = downloadVideo(video)
@@ -176,7 +176,7 @@ object RealtimeSyncService {
                     SyncManager.completeSync(0, 0, 1)
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error auto-downloading video: ${e.message}")
+                SafeLog.e(TAG, "Error auto-downloading video: %s", e.message)
             }
         }
     }
@@ -188,7 +188,7 @@ object RealtimeSyncService {
 
         serviceScope.launch {
             try {
-                Log.d(TAG, "Auto-downloading new hero: ${SafeLog.sanitize(hero.title)}")
+                SafeLog.d(TAG, "Auto-downloading new hero: %s", hero.title)
                 SyncManager.startSync("Downloading: ${hero.title}", 1, isDownloadingVideos = true)
                 VideoSyncManager.initialize(context)
                 val success = downloadHero(hero)
@@ -200,7 +200,7 @@ object RealtimeSyncService {
                     SyncManager.completeSync(0, 0, 1)
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error auto-downloading hero: ${e.message}")
+                SafeLog.e(TAG, "Error auto-downloading hero: %s", e.message)
             }
         }
     }
@@ -218,7 +218,7 @@ object RealtimeSyncService {
                 isHero       = false
             )
         } catch (e: Exception) {
-            Log.e(TAG, "Download error: ${e.message}")
+            SafeLog.e(TAG, "Download error: %s", e.message)
             false
         }
     }
@@ -236,7 +236,7 @@ object RealtimeSyncService {
                 isHero       = true
             )
         } catch (e: Exception) {
-            Log.e(TAG, "Download error: ${e.message}")
+            SafeLog.e(TAG, "Download error: %s", e.message)
             false
         }
     }

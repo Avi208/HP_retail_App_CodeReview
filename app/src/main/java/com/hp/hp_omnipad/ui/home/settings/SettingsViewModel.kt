@@ -12,6 +12,7 @@ import com.hp.hp_omnipad.data.repository.FirestoreRepository
 import com.hp.hp_omnipad.data.repository.HeroRepository
 import com.hp.hp_omnipad.utils.FileDownloader
 import com.hp.hp_omnipad.utils.OfflineDataManager
+import com.hp.hp_omnipad.utils.SafeLog
 import com.hp.hp_omnipad.utils.VideoSyncManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -162,13 +163,13 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                     baseFolder.listFiles()?.forEach { folder ->
                         if (folder.isDirectory) {
                             folder.deleteRecursively()
-                            Log.d("SettingsViewModel", "Deleted: ${folder.name}")
+                            SafeLog.d("SettingsViewModel", "Deleted: %s", folder.name)
                         }
                     }
                 }
                 Log.d("SettingsViewModel", "All downloaded videos deleted")
             } catch (e: Exception) {
-                Log.e("SettingsViewModel", "Error deleting videos: ${e.message}")
+                SafeLog.e("SettingsViewModel", "Error deleting videos: %s", e.message)
             }
         }
 

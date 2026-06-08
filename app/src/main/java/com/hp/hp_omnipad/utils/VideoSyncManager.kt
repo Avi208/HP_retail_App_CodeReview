@@ -103,7 +103,7 @@ object VideoSyncManager {
             try {
                 syncAllVideos(context, videos, heroes)
             } catch (e: Exception) {
-                Log.e(TAG, "Background sync failed: ${e.message}")
+                SafeLog.e(TAG, "Background sync failed: %s", e.message)
                 SyncManager.updateMessage("Download paused — will retry next launch")
                 delay(3000)
                 SyncManager.completeSync()
@@ -217,7 +217,7 @@ object VideoSyncManager {
                 skipCount++
             } else {
                 currentDownloadingVideoId = hero.id
-                Log.d(TAG, "📥 Syncing hero: ${hero.title}")
+                SafeLog.d(TAG, "Syncing hero: %s", hero.title)
                 
                 val success = downloadVideoWithMetadata(
                     videoId = hero.id,
@@ -257,12 +257,12 @@ object VideoSyncManager {
                     val metadata = gson.fromJson(metadataFile.readText(), VideoMetadata::class.java)
                     if (metadata.thumbnailUrl.isNotEmpty()) {
                         if (downloadFile(metadata.thumbnailUrl, thumbnailFile)) {
-                            Log.d(TAG, "✅ Thumbnail recovered for: ${folder.name}")
+                            SafeLog.d(TAG, "Thumbnail recovered for: %s", folder.name)
                             successCount++
                         }
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG, "Failed to retry thumbnail: ${e.message}")
+                    SafeLog.e(TAG, "Failed to retry thumbnail: %s", e.message)
                 }
             }
         }
@@ -319,7 +319,7 @@ object VideoSyncManager {
                 return@withContext false
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Sync error for ${SafeLog.sanitize(title)}: ${SafeLog.sanitize(e.message)}")
+            SafeLog.e(TAG, "Sync error for %s: %s", title, e.message)
             false
         }
     }
@@ -374,7 +374,7 @@ object VideoSyncManager {
             // 200 = Full file, 206 = Partial content (Successful resume)
             val isResuming = (responseCode == HttpURLConnection.HTTP_PARTIAL)
             if (responseCode != HttpURLConnection.HTTP_OK && !isResuming) {
-                Log.e(TAG, "❌ HTTP error $responseCode for: ${SafeLog.sanitize(urlString)}")
+                SafeLog.e(TAG, "HTTP error %s for: %s", responseCode, urlString)
                 return false
             }
 
@@ -427,7 +427,7 @@ object VideoSyncManager {
             }
             return true
         } catch (e: Exception) {
-            Log.e(TAG, "Download failed: ${e.message}")
+            SafeLog.e(TAG, "Download failed: %s", e.message)
             return false
         } finally {
             connection?.disconnect()

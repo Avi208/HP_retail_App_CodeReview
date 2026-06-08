@@ -12,6 +12,7 @@ import com.hp.hp_omnipad.data.local.entity.toVideoEntity
 import com.hp.hp_omnipad.data.remote.model.CategoryDto
 import com.hp.hp_omnipad.data.remote.model.VideoDto
 import com.hp.hp_omnipad.ui.home.model.VideoItem
+import com.hp.hp_omnipad.utils.SafeLog
 import kotlinx.coroutines.tasks.await
 
 object FirestoreRepository {
@@ -276,9 +277,9 @@ object FirestoreRepository {
     suspend fun deleteDownloadedVideo(videoId: String) {
         try {
             firestore.collection("downloaded_videos").document(videoId).delete().await()
-            Log.d(TAG, "Deleted downloaded video record for: $videoId")
+            SafeLog.d(TAG, "Deleted downloaded video record for: %s", videoId)
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to delete downloaded video record: ${e.message}")
+            SafeLog.e(TAG, "Failed to delete downloaded video record: %s", e.message)
         }
     }
 }
