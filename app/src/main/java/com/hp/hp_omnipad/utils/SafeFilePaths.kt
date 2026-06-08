@@ -7,25 +7,49 @@ import java.io.File
  */
 internal object SafeFilePaths {
 
+    private val SAFE_FILENAME = Regex("^[a-zA-Z0-9._-]+$")
+
     fun sanitizeVideoId(videoId: String): String? {
         if (videoId.isBlank() || videoId.length > 128) return null
         if (!videoId.matches(Regex("^[a-zA-Z0-9_-]+$"))) return null
         return videoId
     }
 
+    /**
+     * Allowlist validation for a single path segment (no directory separators).
+     */
+    fun sanitizeFileName(fileName: String): String? {
+        if (fileName.isBlank() || fileName.length > 255) return null
+        val baseName = File(fileName).name
+        if (baseName != fileName) return null
+        if (!baseName.matches(SAFE_FILENAME)) return null
+        return baseName
+    }
+
     fun resolveChildFile(baseDir: File, childName: String): File? {
-        if (childName.isBlank() || childName.contains("..")) return null
-        if (childName.contains('/') || childName.contains('\\')) return null
+        val safeName = sanitizeFileName(childName) ?: return null
         return try {
-            val dirCanonical = baseDir.canonicalFile
-            val file = File(dirCanonical, childName).canonicalFile
-            val basePath = dirCanonical.absolutePath
-            val filePath = file.absolutePath
-            if (filePath == basePath || !filePath.startsWith("$basePath${File.separator}")) {
+            val basePath = baseDir.canonicalFile.toPath().normalize()
+            val resolved = basePath.resolve(safeName).normalize()
+            if (resolved == basePath || !resolved.startsWith(basePath)) {
                 null
             } else {
-                file
+                resolved.toFile()
             }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    /**
+     * Resolves a cached absolute directory path only if it exists and lies under [allowedBase].
+     */
+    fun resolveCachedDirectory(absolutePath: String, allowedBase: File): File? {
+        if (absolutePath.isBlank()) return null
+        return try {
+            val dir = File(absolutePath).canonicalFile
+            if (!dir.isDirectory || !dir.exists()) return null
+            if (isContainedIn(dir, allowedBase)) dir else null
         } catch (e: Exception) {
             null
         }

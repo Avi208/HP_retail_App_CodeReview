@@ -480,36 +480,41 @@ object VideoSyncManager {
     }
 
     fun findVideoFolder(videoId: String): File? {
-        folderCache[videoId]?.let { path ->
-            val folder = File(path)
-            if (folder.exists()) return folder
-            folderCache.remove(videoId)
+        val safeId = SafeFilePaths.sanitizeVideoId(videoId) ?: return null
+        val baseFolder = getBaseFolder()
+
+        folderCache[safeId]?.let { path ->
+            val folder = SafeFilePaths.resolveCachedDirectory(path, baseFolder)
+            if (folder != null) return folder
+            folderCache.remove(safeId)
         }
 
-        val baseFolder = getBaseFolder()
         if (!baseFolder.exists()) return null
         val found = baseFolder.listFiles()?.find { folder ->
             if (!folder.isDirectory) return@find false
+            if (!SafeFilePaths.isContainedIn(folder, baseFolder)) return@find false
             val metadataFile = File(folder, "metadata.json")
             if (metadataFile.exists()) {
                 try {
                     val metadata = gson.fromJson(metadataFile.readText(), VideoMetadata::class.java)
-                    metadata.id == videoId
+                    metadata.id == safeId
                 } catch (e: Exception) { false }
             } else false
         }
-        
-        if (found != null) folderCache[videoId] = found.absolutePath
+
+        if (found != null) folderCache[safeId] = found.absolutePath
         return found
     }
 
     private fun getOrCreateVideoFolder(videoId: String, title: String): File {
-        val existing = findVideoFolder(videoId)
+        val safeId = SafeFilePaths.sanitizeVideoId(videoId)
+            ?: throw IllegalArgumentException("Invalid video ID")
+        val existing = findVideoFolder(safeId)
         if (existing != null) return existing
-        val folderName = title.replace(Regex("[\\\\/:*?\"<>|]"), "_").replace(Regex("\\s+"), "_").trim().take(50).ifEmpty { videoId }
+        val folderName = title.replace(Regex("[\\\\/:*?\"<>|]"), "_").replace(Regex("\\s+"), "_").trim().take(50).ifEmpty { safeId }
         val folder = File(getBaseFolder(), folderName)
         if (!folder.exists()) folder.mkdirs()
-        folderCache[videoId] = folder.absolutePath
+        folderCache[safeId] = folder.absolutePath
         return folder
     }
 
