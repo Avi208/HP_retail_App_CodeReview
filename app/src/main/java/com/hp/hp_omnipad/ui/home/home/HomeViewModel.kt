@@ -1,7 +1,6 @@
 package com.hp.hp_omnipad.ui.home.home
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.hp.hp_omnipad.data.repository.FirestoreRepository
@@ -99,10 +98,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             withContext(Dispatchers.Main) {
                 // Remove the size-only guard to ensure UI always reflects real disk state
                 _uiState.value = _uiState.value.copy(offlineVideos = offlineVideoItems)
-                Log.d("HomeViewModel", "Offline videos updated: ${offlineVideoItems.size}")
             }
         } catch (e: Exception) {
-            Log.e("HomeViewModel", "Failed to load offline videos: ${e.message}")
         }
     }
 
@@ -120,7 +117,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                 val videoDtos    = FirestoreRepository.getVideos()
                 updateUiState(categoryDtos, videoDtos)
             } catch (e: Exception) {
-                Log.e("HomeViewModel", e.message ?: "Unknown error")
                 _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
             }
         }
@@ -150,15 +146,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private suspend fun fetchDataFromRemote() {
         isFetching = true
         try {
-            Log.d("HomeViewModel", "Fetching fresh data from Firebase...")
             val categoryDtos = FirestoreRepository.fetchFromRemote()
             val videoDtos    = FirestoreRepository.fetchVideosFromRemote()
             val heroDtos     = HeroRepository.fetchFromRemote()
             
             updateUiState(categoryDtos, videoDtos)
-            Log.d("HomeViewModel", "Refreshed: ${videoDtos.size} videos, ${categoryDtos.size} categories, ${heroDtos.size} heroes")
         } catch (e: Exception) {
-            Log.e("HomeViewModel", "Error refreshing data: ${e.message}")
             _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
         } finally {
             isFetching = false
@@ -170,14 +163,11 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
      */
     private suspend fun checkForDeletedVideos() = withContext(Dispatchers.IO) {
         try {
-            Log.d("HomeViewModel", "Checking for deleted videos from server...")
             val videoDtos = FirestoreRepository.getVideos()
             val heroes    = HeroRepository.getHeroes()
             VideoSyncManager.checkAndRemoveDeletedVideos(getApplication(), videoDtos, heroes)
             loadOfflineVideosInternal()
-            Log.d("HomeViewModel", "Deleted video check complete")
         } catch (e: Exception) {
-            Log.e("HomeViewModel", "Error checking for deleted videos: ${e.message}")
         }
     }
 

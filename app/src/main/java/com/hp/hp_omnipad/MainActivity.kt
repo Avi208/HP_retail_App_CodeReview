@@ -8,7 +8,6 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -160,7 +159,6 @@ class MainActivity : ComponentActivity() {
         
         // Clean up any incomplete downloads when app is closed
         if (isFinishing) {
-            Log.d("MainActivity", "🧹 App closing - cleaning up incomplete downloads")
             VideoSyncManager.cleanupCurrentDownload()
         }
     }

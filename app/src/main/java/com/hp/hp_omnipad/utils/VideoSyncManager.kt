@@ -25,7 +25,6 @@ import java.net.HttpURLConnection
  */
 object VideoSyncManager {
     
-    private const val TAG = "VideoSyncManager"
     private val gson = Gson()
 
     private val backgroundScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -43,7 +42,6 @@ object VideoSyncManager {
     fun initialize(context: Context) {
         if (appContext != null) return
         appContext = context.applicationContext
-        SafeLog.d(TAG) { text("Initialized VideoSyncManager") }
     }
     
     data class VideoMetadata(
@@ -102,7 +100,6 @@ object VideoSyncManager {
             try {
                 syncAllVideos(context, videos, heroes)
             } catch (e: Exception) {
-                SafeLog.e(TAG) { text("Background sync failed: "); value(e.message) }
                 SyncManager.updateMessage("Download paused — will retry next launch")
                 delay(3000)
                 SyncManager.completeSync()
@@ -147,7 +144,6 @@ object VideoSyncManager {
                 skipCount++
             } else {
                 currentDownloadingVideoId = video.id
-                Log.d(TAG, "📥 Syncing video: ${video.title}")
                 
                 val success = downloadVideoWithMetadata(
                     videoId = video.id,
@@ -216,7 +212,6 @@ object VideoSyncManager {
                 skipCount++
             } else {
                 currentDownloadingVideoId = hero.id
-                SafeLog.d(TAG) { text("📥 Syncing hero: "); value(hero.title) }
                 
                 val success = downloadVideoWithMetadata(
                     videoId = hero.id,
@@ -256,12 +251,10 @@ object VideoSyncManager {
                     val metadata = gson.fromJson(metadataFile.readText(), VideoMetadata::class.java)
                     if (metadata.thumbnailUrl.isNotEmpty()) {
                         if (downloadFile(metadata.thumbnailUrl, thumbnailFile)) {
-                            SafeLog.d(TAG) { text("✅ Thumbnail recovered for: "); value(folder.name) }
                             successCount++
                         }
                     }
                 } catch (e: Exception) {
-                    SafeLog.e(TAG) { text("Failed to retry thumbnail: "); value(e.message) }
                 }
             }
         }
@@ -318,10 +311,6 @@ object VideoSyncManager {
                 return@withContext false
             }
         } catch (e: Exception) {
-            SafeLog.e(TAG) {
-                text("Sync error for "); value(title)
-                text(": "); value(e.message)
-            }
             false
         }
     }
@@ -340,7 +329,6 @@ object VideoSyncManager {
         try {
             val url = SafeUrls.toValidatedDownloadUrl(urlString)
             if (url == null) {
-                SafeLog.e(TAG) { text("Rejected download URL") }
                 return false
             }
             connection = url.openConnection() as HttpURLConnection
@@ -376,10 +364,6 @@ object VideoSyncManager {
             // 200 = Full file, 206 = Partial content (Successful resume)
             val isResuming = (responseCode == HttpURLConnection.HTTP_PARTIAL)
             if (responseCode != HttpURLConnection.HTTP_OK && !isResuming) {
-                SafeLog.e(TAG) {
-                    text("❌ HTTP error "); value(responseCode)
-                    text(" for: "); value(urlString)
-                }
                 return false
             }
 
@@ -432,7 +416,6 @@ object VideoSyncManager {
             }
             return true
         } catch (e: Exception) {
-            SafeLog.e(TAG) { text("Download failed: "); value(e.message) }
             return false
         } finally {
             connection?.disconnect()

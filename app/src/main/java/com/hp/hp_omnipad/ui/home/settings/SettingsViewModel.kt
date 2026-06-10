@@ -3,7 +3,6 @@ package com.hp.hp_omnipad.ui.home.settings
 import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
@@ -104,8 +103,6 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         _uiState.value = _uiState.value.copy(offloadAppEnabled = true)
         _offloadAppEnabled.value = true
         prefs.edit().putBoolean("offload_app_enabled", true).apply()
-        Log.d("SettingsViewModel", "Offload mode enabled — starting video downloads")
-
         backgroundScope.launch {
             try {
                 val context = getApplication<Application>().applicationContext
@@ -114,20 +111,16 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                 // fetchVideosFromRemote() which always hit Firebase.
                 // If Room/memory cache is fresh, zero Firebase reads needed here.
                 val videos = FirestoreRepository.getVideos().also {
-                    if (it.isEmpty()) Log.w("SettingsViewModel", "No videos in cache")
                     OfflineDataManager.saveVideosToCache(context, it)
                 }
 
                 val heroes = HeroRepository.getHeroes().also {
-                    if (it.isEmpty()) Log.w("SettingsViewModel", "No heroes in cache")
                     OfflineDataManager.saveHeroesToCache(context, it)
                 }
 
-                Log.d("SettingsViewModel", "Starting sync: ${videos.size} videos, ${heroes.size} heroes")
                 VideoSyncManager.syncAllVideos(context, videos, heroes)
 
             } catch (e: Exception) {
-                Log.e("SettingsViewModel", "Error triggering video downloads: ${e.message}", e)
             }
         }
     }*/
@@ -136,19 +129,15 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         _uiState.value = _uiState.value.copy(offloadAppEnabled = true)
         _offloadAppEnabled.value = true
         prefs.edit().putBoolean("offload_app_enabled", true).apply()
-        Log.d("SettingsViewModel", "Offload mode enabled — starting video downloads")
 
         val context = getApplication<Application>().applicationContext
         viewModelScope.launch(Dispatchers.IO) {
             val videos = FirestoreRepository.getVideos().also {
-                if (it.isEmpty()) Log.w("SettingsViewModel", "No videos in cache")
                 OfflineDataManager.saveVideosToCache(context, it)
             }
             val heroes = HeroRepository.getHeroes().also {
-                if (it.isEmpty()) Log.w("SettingsViewModel", "No heroes in cache")
                 OfflineDataManager.saveHeroesToCache(context, it)
             }
-            Log.d("SettingsViewModel", "Starting sync: ${videos.size} videos, ${heroes.size} heroes")
             VideoSyncManager.startSync(context, videos, heroes)
         }
     }
@@ -156,26 +145,21 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     fun disableOffloadAndDeleteVideos() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                Log.d("SettingsViewModel", "Disabling offload mode and deleting all downloaded videos")
                 val baseFolder = FileDownloader.getDownloadFolder()
                 if (baseFolder.exists()) {
                     baseFolder.listFiles()?.forEach { folder ->
                         if (folder.isDirectory) {
                             folder.deleteRecursively()
-                            Log.d("SettingsViewModel", "Deleted: ${folder.name}")
                         }
                     }
                 }
-                Log.d("SettingsViewModel", "All downloaded videos deleted")
             } catch (e: Exception) {
-                Log.e("SettingsViewModel", "Error deleting videos: ${e.message}")
             }
         }
 
         _uiState.value = _uiState.value.copy(offloadAppEnabled = false)
         _offloadAppEnabled.value = false
         prefs.edit().putBoolean("offload_app_enabled", false).apply()
-        Log.d("SettingsViewModel", "Offload mode disabled — videos will stream from internet")
     }
 
     fun setVideoQuality(quality: String) {

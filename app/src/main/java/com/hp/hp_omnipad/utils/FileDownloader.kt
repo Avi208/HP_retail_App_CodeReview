@@ -11,7 +11,6 @@ import java.io.File
 
 object FileDownloader {
 
-    private const val TAG = "FileDownloader"
     private const val APP_FOLDER = "OmniPad"
     private const val METADATA_FILE = "metadata.txt"
     private const val VIDEO_ID_FILE = "video_id.txt"
@@ -128,7 +127,6 @@ object FileDownloader {
             val idFile = File(folder, VIDEO_ID_FILE)
             idFile.writeText(videoId)
         } catch (e: Exception) {
-            SafeLog.e(TAG) { text("Failed to save video ID: "); value(e.message) }
         }
     }
 
@@ -158,7 +156,6 @@ object FileDownloader {
         val videoFile = File(folder, "video.mp4")
 
         if (videoFile.exists()) {
-            SafeLog.d(TAG) { text("Video already downloaded") }
             return -1
         }
 
@@ -181,12 +178,6 @@ object FileDownloader {
 
         val downloadId = manager.enqueue(request)
 
-        SafeLog.d(TAG) {
-            text("Download started with id: "); value(downloadId)
-            text(" for video: "); value(title)
-            text(" to folder: "); value(folder.name)
-        }
-
         return downloadId
     }
 
@@ -198,36 +189,27 @@ object FileDownloader {
         videoId: String
     ): Boolean = withContext(Dispatchers.IO) {
         if (thumbnailUrl.isEmpty()) {
-            SafeLog.w(TAG) { text("Thumbnail URL is empty for video: "); value(videoId) }
             return@withContext false
         }
 
         try {
             val folder = findFolderByVideoId(videoId)
             if (folder == null) {
-                SafeLog.e(TAG) { text("Video folder not found for ID: "); value(videoId) }
                 return@withContext false
             }
             
             val thumbnailFile = File(folder, "thumbnail.jpg")
 
             if (thumbnailFile.exists() && thumbnailFile.length() > 0) {
-                SafeLog.d(TAG) { text("Thumbnail already exists: "); value(thumbnailFile.absolutePath) }
                 return@withContext true
             }
 
             // Save thumbnail URL for retry attempts
             saveThumbnailUrl(videoId, thumbnailUrl)
 
-            SafeLog.d(TAG) {
-                text("Starting thumbnail download from: "); value(thumbnailUrl)
-                text(" to "); value(thumbnailFile.absolutePath)
-            }
-
             // Download directly using URL connection with timeout
             val url = SafeUrls.toValidatedDownloadUrl(thumbnailUrl)
             if (url == null) {
-                SafeLog.w(TAG) { text("Rejected thumbnail URL for video: "); value(videoId) }
                 return@withContext false
             }
             val connection = url.openConnection().apply {
@@ -245,13 +227,8 @@ object FileDownloader {
                 }
             }
 
-            SafeLog.d(TAG) {
-                text("Thumbnail downloaded successfully to: "); value(thumbnailFile.absolutePath)
-                text(", size: "); value(thumbnailFile.length())
-            }
             true
         } catch (e: Exception) {
-            SafeLog.e(TAG, e) { text("Failed to download thumbnail: "); value(e.message) }
             false
         }
     }
@@ -265,7 +242,6 @@ object FileDownloader {
             val urlFile = File(folder, "thumbnail_url.txt")
             urlFile.writeText(url)
         } catch (e: Exception) {
-            SafeLog.e(TAG) { text("Failed to save thumbnail URL: "); value(e.message) }
         }
     }
 
@@ -345,7 +321,6 @@ object FileDownloader {
             val metadataFile = File(folder, METADATA_FILE)
             metadataFile.writeText(title)
         } catch (e: Exception) {
-            SafeLog.e(TAG) { text("Failed to save metadata: "); value(e.message) }
         }
     }
 
@@ -404,19 +379,9 @@ object FileDownloader {
      * Delete entire video folder (including video and thumbnail)
      */
     fun deleteVideo(videoId: String) {
-        SafeLog.d(TAG) { text("Attempting to delete video: "); value(videoId) }
-        SafeLog.d(TAG) { text("Base folder: "); value(getBaseFolder().absolutePath) }
-        
         val folder = findFolderByVideoId(videoId)
         if (folder != null && folder.exists()) {
-            SafeLog.d(TAG) { text("Found folder to delete: "); value(folder.absolutePath) }
-            val deleted = folder.deleteRecursively()
-            SafeLog.d(TAG) {
-                text("Deleted folder "); value(folder.name)
-                text(": "); value(deleted)
-            }
-        } else {
-            SafeLog.w(TAG) { text("Folder not found for video ID: "); value(videoId) }
+            folder.deleteRecursively()
         }
     }
 
@@ -434,7 +399,6 @@ object FileDownloader {
                     return idMatch.groupValues[1]
                 }
             } catch (e: Exception) {
-                SafeLog.e(TAG) { text("Failed to parse metadata.json: "); value(e.message) }
             }
         }
         
@@ -466,7 +430,6 @@ object FileDownloader {
                 
                 // Skip incomplete downloads
                 if (lockFile.exists()) {
-                    SafeLog.d(TAG) { text("Skipping incomplete download: "); value(folder.name) }
                     return@mapNotNull null
                 }
 

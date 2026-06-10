@@ -1,6 +1,5 @@
 package com.hp.hp_omnipad.ui.home.components
 
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.Spring
@@ -38,8 +37,6 @@ import com.hp.hp_omnipad.ui.home.model.VideoItem
 import com.hp.hp_omnipad.utils.VideoSyncManager
 import java.io.File
 
-private const val TAG = "VideoCard"
-
 @Composable
 fun VideoCard(
     video: VideoItem,
@@ -71,13 +68,6 @@ fun VideoCard(
         localThumbnailPath = if (isDownloaded) {
             VideoSyncManager.getLocalThumbnailPath(video.id)
         } else null
-        
-        // Log render source
-        if (isDownloaded) {
-            Log.d(TAG, " RENDERING OFFLINE: ${video.title} (ID: ${video.id})")
-        } else {
-            Log.d(TAG, " RENDERING ONLINE: ${video.title} (ID: ${video.id})")
-        }
     }
     
     // Use local thumbnail if downloaded and file exists, otherwise use remote URL

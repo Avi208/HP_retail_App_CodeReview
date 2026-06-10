@@ -3,7 +3,6 @@ package com.hp.hp_omnipad.ui.video
 import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.media.AudioManager
-import android.util.Log
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.activity.compose.BackHandler
@@ -356,10 +355,7 @@ private fun VideoControls(
             Row(verticalAlignment = Alignment.CenterVertically) {
 
                 // Autoplay toggle FIRST
-                IconButton(onClick ={
-                    Log.d("AUTOPLAY_UI", "Button clicked")
-                    onAutoplayToggle()
-                },
+                IconButton(onClick = onAutoplayToggle,
                     modifier = Modifier
                         .background(
                             if (!autoplayEnabled)

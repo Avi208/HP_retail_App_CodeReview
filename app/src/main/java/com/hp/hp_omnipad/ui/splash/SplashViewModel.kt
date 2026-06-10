@@ -3,7 +3,6 @@ package com.hp.hp_omnipad.ui.splash
 import android.app.Application
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.hp.hp_omnipad.data.repository.FirestoreRepository
@@ -24,7 +23,6 @@ class SplashViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val TAG = "SplashViewModel"
     private val context = application.applicationContext
 
     private val connectivityManager =
@@ -60,8 +58,6 @@ class SplashViewModel(
                     Triple(cats, vids, heroes)
                 }
 
-                Log.d(TAG, "Startup data ready: ${videos.size} videos, ${heroes.size} heroes")
-
                 // 3. Start the realtime sync service (handles hourly refresh + cleanup)
                 withContext(Dispatchers.IO) {
                     RealtimeSyncService.initialize(context)
@@ -76,26 +72,20 @@ class SplashViewModel(
                 //    - device is online, AND
                 //    - offload mode is enabled in settings
                 if (isCurrentlyConnected() && SettingsViewModel.isOffloadEnabled(context)) {
-                    Log.d(TAG, "Offload enabled — starting background video sync")
                     backgroundScope.launch {
                         // Small delay so the UI can settle before heavy I/O starts
                         delay(500)
                         try {
                             VideoSyncManager.syncAllVideos(context, videos, heroes)
-                            Log.d(TAG, "Background video sync complete")
                         } catch (e: Exception) {
-                            Log.e(TAG, "Background video sync failed: ${e.message}")
                             SyncManager.updateMessage("Download paused — will retry next launch")
                             delay(3000)
                             SyncManager.completeSync()
                         }
                     }
-                } else {
-                    Log.d(TAG, "Skipping video sync (offload disabled or no connection)")
                 }
 
             } catch (e: Exception) {
-                Log.e(TAG, "Error during startup: ${e.message}")
             }
 
             // Show splash for at least 1.5 s for branding
@@ -123,8 +113,6 @@ class SplashViewModel(
                     Triple(cats, vids, heroes)
                 }
 
-                Log.d(TAG, "Startup data ready: ${videos.size} videos, ${heroes.size} heroes")
-
                 withContext(Dispatchers.IO) {
                     RealtimeSyncService.initialize(context)
                     RealtimeSyncService.startListeningWithKnownData(
@@ -135,14 +123,10 @@ class SplashViewModel(
                 }
 
                 if (isCurrentlyConnected() && SettingsViewModel.isOffloadEnabled(context)) {
-                    Log.d(TAG, "Offload enabled — starting background video sync")
                     VideoSyncManager.startSync(context, videos, heroes)  // ← one line
-                } else {
-                    Log.d(TAG, "Skipping video sync (offload disabled or no connection)")
                 }
 
             } catch (e: Exception) {
-                Log.e(TAG, "Error during startup: ${e.message}")
             }
 
             val elapsed = System.currentTimeMillis() - startTime

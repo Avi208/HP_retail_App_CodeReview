@@ -1,6 +1,5 @@
 package com.hp.hp_omnipad.ui.video
 
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.core.*
@@ -108,10 +107,8 @@ fun VideoDetailScreen(
 
         val listener = object : Player.Listener {
             override fun onPlaybackStateChanged(state: Int) {
-                Log.d("AUTOPLAY", "Playback state changed → $state")
                 //if (state == Player.STATE_ENDED && autoplayEnabled) {
                 if (state == Player.STATE_ENDED && autoplayEnabled && !handledEnd && currentVideo != null) {
-                    Log.d("AUTOPLAY", "STATE_ENDED detected, autoplayEnabled = $autoplayEnabled")
 
                         handledEnd = true
 
@@ -126,7 +123,6 @@ fun VideoDetailScreen(
                         currentIndex < currentList.size - 1 -> currentList[currentIndex + 1]
                         else -> null
                     }
-                    Log.d("AUTOPLAY", "Next video = ${nextVideo?.title}")
 
                     nextVideo?.let {
                         //playerViewModel.playVideo(it) // 🔥 better than direct state mutation

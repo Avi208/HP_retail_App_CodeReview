@@ -1,6 +1,5 @@
 package com.hp.hp_omnipad.utils
 
-import android.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -21,14 +20,11 @@ data class SyncState(
 
 object SyncManager {
     
-    private const val TAG = "SyncManager"
-    
     private val _syncState = MutableStateFlow(SyncState())
     val syncState = _syncState.asStateFlow()
 
     
     fun startSync(message: String, totalItems: Int = 0, isDownloadingVideos: Boolean = false) {
-        Log.d(TAG, "Starting sync: $message, totalItems=$totalItems")
         _syncState.value = SyncState(
             isSyncing = true,
             message = message,
@@ -119,7 +115,6 @@ object SyncManager {
     
     fun completeSync(successCount: Int = 0, skipCount: Int = 0, failCount: Int = 0) {
         val current = _syncState.value
-        Log.d(TAG, "Sync completed: success=$successCount, skipped=$skipCount, failed=$failCount")
         
         val hasContent = successCount > 0 || skipCount > 0
         val allFailed = failCount > 0 && successCount == 0 && skipCount == 0
