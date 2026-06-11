@@ -34,7 +34,8 @@ object VideoSyncManager {
     private var currentDownloadingVideoId: String? = null
     
     // In-memory cache for folder lookups to avoid repeated filesystem scans
-    private val folderCache = mutableMapOf<String, String?>()
+    private val folderCache = mutableMapOf<String, File>()
+
     
     /**
      * Initialize with application context to determine proper storage paths.
@@ -471,8 +472,8 @@ object VideoSyncManager {
         val safeId = SafeFilePaths.sanitizeVideoId(videoId) ?: return null
         val baseFolder = getBaseFolder()
 
-        folderCache[safeId]?.let { path ->
-            val folder = SafeFilePaths.resolveCachedDirectory(path, baseFolder)
+        folderCache[safeId]?.let { cached ->
+            val folder = SafeFilePaths.validateCachedFolder(cached, baseFolder)
             if (folder != null) return folder
             folderCache.remove(safeId)
         }
@@ -490,7 +491,7 @@ object VideoSyncManager {
             } else false
         }
 
-        if (found != null) folderCache[safeId] = found.absolutePath
+        if (found != null) folderCache[safeId] = found
         return found
     }
 
@@ -502,7 +503,7 @@ object VideoSyncManager {
         val folderName = title.replace(Regex("[\\\\/:*?\"<>|]"), "_").replace(Regex("\\s+"), "_").trim().take(50).ifEmpty { safeId }
         val folder = File(getBaseFolder(), folderName)
         if (!folder.exists()) folder.mkdirs()
-        folderCache[safeId] = folder.absolutePath
+        folderCache[safeId] = folder
         return folder
     }
 
